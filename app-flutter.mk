@@ -18,20 +18,32 @@
 # }}}
 
 
-include ../env/common.mk
-
 .PHONY: all
-all: ios
+all: 
 
-include shared/target-all.mk
+include ../env/common.mk
+pwd/gui := ./gui
+$(call include,shared/target-all.mk)
 
-.PHONY: ios
-ios: $(forks)
-	flutter/bin/flutter build ios
+$(foreach fork,$(forks),$(shell ln -sf $(patsubst %/pubspec.yaml,%,$(fork)) >/dev/null))
+
+builds := 
+builds += apk
+builds += macos
+builds += ios
+
+define all
+.PHONY: $(1)
+$(1): $$(forks) $$(dart)
+	$$(flutter) build $(1) $(if $(filter $(1),ios),|| true)
+all: $(1)
+endef
+
+$(foreach build,$(builds),$(eval $(call all,$(build))))
 
 .PHONY: test
 test: $(forks)
-	flutter/bin/flutter run
+	$(flutter) run
 
 .PHONY: run
 run:
