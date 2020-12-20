@@ -21,7 +21,7 @@
 assemble := android
 platform := android
 
-generated := $(pwd)/gui/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant%java
+generated := $(pwd/gui)/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant%java
 
 include $(pwd)/target-all.mk
 
@@ -30,11 +30,11 @@ jni := armeabi-v7a arm64-v8a
 
 $(output)/flutter/flutter_assets/AssetManifest%json $(foreach arch,$(jni),$(output)/flutter/$(arch)/app%so): $(dart)
 	rm -rf .dart_tool/flutter_build $(output)/flutter
-	$(flutter) assemble \
+	cd $(pwd/gui) && $(flutter) assemble \
 	    -dTargetPlatform="$(platform)" \
 	    -dTargetFile="lib/main.dart" \
 	    -dBuildMode="$(mode)" \
 	    -dTreeShakeIcons="true" \
 	    -dTrackWidgetCreation="true" \
-	    --output="$(output)/flutter" \
+	    --output="$(CURDIR)/$(output)/flutter" \
 	    $(foreach arch,$(jni),android_aot_bundle_$(mode)_android-$(flutter/$(arch)))
